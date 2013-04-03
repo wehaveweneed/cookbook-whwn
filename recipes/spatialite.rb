@@ -9,8 +9,8 @@ class Chef::Recipe
   include HelperLib
 end
 
-require_recipe "sqlite"
-require_recipe "geos"
+include_recipe "sqlite"
+include_recipe "geos"
 include_recipe "python::pip"
 
 execute "setup ppa apt repository ubuntugis" do
