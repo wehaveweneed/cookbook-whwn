@@ -37,5 +37,5 @@ python_virtualenv node['whwn']['virtualenv'] do
   action :create
 end
 
-include_recipe "sqlite::spatialite"
+include_recipe "whwn::spatialite"
 
