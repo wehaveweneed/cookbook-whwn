@@ -1,7 +1,14 @@
+name              "whwn"
 maintainer        "UCSD-TIES"
 maintainer_email  "j@jnwng.com"
 description       "Installs base packages for WHWN"
 version           "0.1.1"
+
+recipe "whwn", "Set up whwn libraries and dependencies"
+recipe "whwn::db", "Set up PostgreSQL"
+recipe "whwn::dev", "Set up supervisor services"
+recipe "whwn::postgis", "Set up postgis extension"
+recipe "whwn::spatialite", "Set up spatialite extension"
 
 depends           "python"
 depends           "postgresql"
