@@ -41,7 +41,6 @@ bash "install_postgis" do
 end
 
 bash "configure postgis" do
-  user "postgres"
   code <<-EOH
   createdb -h localhost -l en_US.utf8 -T template0 -O postgres -U postgres -E UTF8 #{template_name}
   createlang plpgsql -h localhost -U postgres -d #{template_name}
