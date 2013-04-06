@@ -3,8 +3,6 @@
 # Recipe:: postgis
 #
 
-breakpoint "foo"
-
 include_recipe "postgresql"
 include_recipe "geos"
 include_recipe "apt"
@@ -48,8 +46,8 @@ bash "configure postgis" do
   createdb -h localhost -l en_US.utf8 -T template0 -O postgres -U postgres -E UTF8 #{template_name}
   createlang plpgsql -h localhost -U postgres -d #{template_name}
 
-  psql -h localhost -q -d #{template_name} -f #{pg_postgis}
-  psql -h localhost -q -d #{template_name} -f #{pg_spatial_ref}
+  psql -h localhost -q -d #{template_name} -f #{pg_postgis} -U postgres
+  psql -h localhost -q -d #{template_name} -f #{pg_spatial_ref} -U postgres
   EOH
   only_if { `psql -U postgres -h localhost -t -c "select count(*) from pg_catalog.pg_database where datname = '#{template_name}'"`.include? '0'}
 end
