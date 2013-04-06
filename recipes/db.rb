@@ -13,11 +13,6 @@ include_recipe "postgresql::contrib"
 include_recipe "postgresql::libpq"
 include_recipe "whwn::postgis"
 
-user "postgres" do
-  password "$1$siDybojc$pVgYAJlJBDHXdLmd9f6Gy1"
-  action :modify
-end
-
 pg_user "whwn" do
   privileges :superuser => true, :createdb => false, :login => true
   password "whwn2012"
