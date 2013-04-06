@@ -3,20 +3,23 @@
 # Recipe:: postgis
 #
 
+breakpoint "foo"
+
 include_recipe "postgresql"
 include_recipe "geos"
 include_recipe "apt"
 
-execute "setup ppa apt repository ubuntugis" do
-  command "add-apt-repository ppa:ubuntugis/ubuntugis-unstable && apt-get update"
-  not_if  "test -f /etc/apt/sources.list.d/ubuntugis-ubuntugis-unstable-#{node["lsb"]["codename"]}.list"
+apt_repository "ubuntugis-repo" do
+  uri "http://ppa.launchpad.net/ubuntugis/ubuntugis-unstable/ubuntu"
+  distribution node['lsb']['codename']
+  components ["main"]
+  deb_src true
+  keyserver "keyserver.ubuntu.com"
+  key "314DF160"
 end
 
-packages = ["libxml2-dev", "libproj-dev", "libgdal-dev", "make"]
-
-packages.each do |dev_pkg|
-    package dev_pkg
-end
+packages = ["libxml2-dev", "libproj-dev", "libgdal-dev", "make"] 
+packages.each {|dev_pkg| package dev_pkg}
 
 install_path = "#{Chef::Config[:file_cache_path]}/postgis-#{node['postgis']['version']}"
 template_name = "template_postgis"
@@ -24,7 +27,7 @@ pg_postgis = "/usr/share/postgresql/#{node['postgresql']['version']}/contrib/pos
 pg_spatial_ref = "/usr/share/postgresql/#{node['postgresql']['version']}/contrib/postgis-1.5/spatial_ref_sys.sql"
 
 remote_file "#{install_path}.tar.gz" do
-  source "http://postgis.refractions.net/download/postgis-#{node['postgis']['version']}.tar.gz"
+  source "http://download.osgeo.org/postgis/source/postgis-#{node['postgis']['version']}.tar.gz"
   checksum node['postgis']['checksum']
   not_if { ::File.exists?(pg_postgis) }
 end
@@ -40,13 +43,13 @@ bash "install_postgis" do
 end
 
 bash "configure postgis" do
-    user "postgres"
-    code <<-EOH
-    createdb -h localhost -l en_US.utf8 -T template0 -O postgres -U postgres -E UTF8 #{template_name}
-    createlang plpgsql -h localhost -U postgres -d #{template_name}
+  user "postgres"
+  code <<-EOH
+  createdb -h localhost -l en_US.utf8 -T template0 -O postgres -U postgres -E UTF8 #{template_name}
+  createlang plpgsql -h localhost -U postgres -d #{template_name}
 
-    psql -h localhost -q -d #{template_name} -f #{pg_postgis}
-    psql -h localhost -q -d #{template_name} -f #{pg_spatial_ref}
-    EOH
-    only_if { `psql -U postgres -h localhost -t -c "select count(*) from pg_catalog.pg_database where datname = '#{template_name}'"`.include? '0'}
+  psql -h localhost -q -d #{template_name} -f #{pg_postgis}
+  psql -h localhost -q -d #{template_name} -f #{pg_spatial_ref}
+  EOH
+  only_if { `psql -U postgres -h localhost -t -c "select count(*) from pg_catalog.pg_database where datname = '#{template_name}'"`.include? '0'}
 end

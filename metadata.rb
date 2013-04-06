@@ -16,5 +16,5 @@ depends "sqlite"
 depends "supervisor"
 depends "apt"
 depends "git"
+depends "runit"
 depends "geos"
-

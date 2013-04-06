@@ -15,11 +15,12 @@ directory "/tmp/whwn" do
   action :create
 end
 
-include_recipe "apt"
+# include_recipe "apt"
 package "g++"
 package "mercurial"
+package "make"
 
-include_recipe "git::source"
+# include_recipe "git::source"
 include_recipe "python"
 
 directory node['whwn']['virtualenv'] do
@@ -27,7 +28,6 @@ directory node['whwn']['virtualenv'] do
   group "whwn"
   mode 0775
   action :create
-  recursive true
 end
 
 python_virtualenv node['whwn']['virtualenv'] do
@@ -37,5 +37,4 @@ python_virtualenv node['whwn']['virtualenv'] do
   action :create
 end
 
-include_recipe "whwn::spatialite"
-
+# include_recipe "whwn::spatialite"
